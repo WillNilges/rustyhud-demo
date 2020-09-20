@@ -1,39 +1,43 @@
-use rustyhud;
+use rustyhud::*;
 use ncurses::*;
 use std::{thread, time};
 use std::collections::HashMap;
+
 
 fn main() {
 
     // Set up omniscient stuff
     // HashMap of active windows to keep track of stuff.
-    let mut windows: std::collections::HashMap<String, (WINDOW, rustyhud::WindowData)> = HashMap::new();
+    let mut windows: std::collections::HashMap<String, (WINDOW, WindowData)> = HashMap::new();
 
-    rustyhud::launch();
+    launch();
 
     // Use WindowData structs to keep track of the windows you want to create
 
     // Create one window
-    let window = rustyhud::WindowData {
-            id: "win1".to_string(),
-            content: rustyhud::WindowContent::Text,
-            message: "Hello!!!".to_string(),
-            style: rustyhud::WindowStyle::Plain,
+    let window = WindowData {
+            id: String::from("win1"),
+            content: WindowContent::Text,
+            message: String::from("Hello!!!"),
+            style: WindowStyle::Plain,
+            ticks: None,
             x_pos: 10,
             y_pos: 10,
             width: 10,
             height: 10,
             priority: false
         };
-    rustyhud::open_win(window, &mut windows); // Open the window.
+
+    open_win(window, &mut windows); // Open the window.
     thread::sleep(time::Duration::from_millis(3000)); // Sleep a bit.
 
     // Create another window.
-    let mod_window = rustyhud::WindowData {
-            id: "win2".to_string(),
-            content: rustyhud::WindowContent::Text,
-            message: "I'm gonna change this window.".to_string(),
-            style: rustyhud::WindowStyle::Plain,
+    let mod_window = WindowData {
+            id: String::from("win2"),
+            content: WindowContent::Text,
+            message: String::from("I'm gonna change this window."),
+            style: WindowStyle::Plain,
+            ticks: None,
             x_pos: 25,
             y_pos: 10,
             width: 10,
@@ -41,22 +45,46 @@ fn main() {
             priority: false
         };
 
-    rustyhud::open_win(mod_window, &mut windows); // Open the window
+    open_win(mod_window, &mut windows); // Open the window
     thread::sleep(time::Duration::from_millis(3000));
 
-    rustyhud::change_window_message("win2".to_string(), "I HAVE CHANGED YOUUUUUU!!!!".to_string(), &mut windows);
+    change_window_message("win2", "I HAVE CHANGED YOUUUUUU!!!!", &mut windows);
 
     thread::sleep(time::Duration::from_millis(1000));
 
-
-    rustyhud::change_window_style("win2".to_string(), rustyhud::WindowStyle::Bold, &mut windows);
+    change_window_style("win2", WindowStyle::Bold, &mut windows);
 
     thread::sleep(time::Duration::from_millis(1000));
 
-    // mod_window.message = "ooooop".to_string(); // Change the name of the window
-    // mod_window.priority = true.to_string(); // and make it override the current window.
-    //
-    // rustyhud::open_win(mod_window, &mut windows); // Open the window
+    // How about a progressbar?
+
+    let progress = WindowData {
+        id: String::from("BRUH-ometer"),
+        content: WindowContent::ProgressBar,
+        message: String::from("0/20"),
+        style: WindowStyle::Plain,
+        ticks: Some(String::from("&")),
+        x_pos: 5,
+        y_pos: 5,
+        width: 30,
+        height: 1,
+        priority: false
+    };
+
+    open_win(progress, &mut windows); // Open the window
+
+    thread::sleep(time::Duration::from_millis(1000));
+
+    for i in 0..21 {
+        change_window_message("BRUH-ometer", format!("{}/20", i).as_str(), &mut windows);
+        thread::sleep(time::Duration::from_millis(100));
+    }
+
+    thread::sleep(time::Duration::from_millis(1000));
+
+    change_window_ticks("BRUH-ometer", "O", &mut windows);
+
+    thread::sleep(time::Duration::from_millis(1000));
 
     // Clean up.
     endwin();
