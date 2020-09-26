@@ -1,16 +1,10 @@
 use rustyhud::*;
 use ncurses::*;
 use std::{thread, time};
-use std::collections::HashMap;
-
 
 fn main() {
-
-    // Set up omniscient stuff
-    // HashMap of active windows to keep track of stuff.
-    let mut windows: std::collections::HashMap<String, (WINDOW, WindowData)> = HashMap::new();
-
     launch();
+
     let mut testwin2 = WindowData::new()
         .with_id("yeetussss")
         .with_message("Hallo")
@@ -50,7 +44,7 @@ fn main() {
 
     thread::sleep(time::Duration::from_millis(2000));
 
-    let mut progressbaryeetus = WindowData::new()
+    let mut example_bar = WindowData::new()
         .with_id("Bruv-o-meter")
         .with_content(WindowContent::ProgressBar)
         .with_message("0/20")
@@ -59,11 +53,33 @@ fn main() {
         .with_dimensions(30, 1)
         .build();
 
-    progressbaryeetus.open();
+    example_bar.open();
+
+    let mut list = WindowData::new()
+        .with_id("Sample list")
+        .with_content(WindowContent::List)
+        .with_items(vec!["Option a", "Option b", "Option c"])
+        .with_position(22, 10)
+        .with_dimensions(10, 3)
+        .build();
+
+    list.open();
+
+    let mut score_board = WindowData::new()
+        .with_id("Sample board")
+        .with_content(WindowContent::ScoreBoard)
+        .with_items(vec!["Character a:10", "Character b:9", "Character Z-theta-RNQ-B-Cordorey7:8"])
+        .with_position(12, 3)
+        .with_dimensions(45, 3)
+        .build();
+
+    score_board.open();
+
+    thread::sleep(time::Duration::from_millis(5000));
 
     for i in 0..21 {
-        progressbaryeetus.message = format!("{}/20", i);
-        progressbaryeetus.redraw();
+        example_bar.message = format!("{}/20", i);
+        example_bar.redraw();
         thread::sleep(time::Duration::from_millis(100));
     }
 
